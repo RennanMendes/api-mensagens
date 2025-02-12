@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: API Mensagens
+  description: API REST para o agendamento de mensagens que poderão ser enviadas por email, sms, push ou whatsapp. Este é um desafio para a vaga de desenvolvedor java pleno do Magalu .
+  version: 0.0.1
+  contact:
+    name: Rennan Mendes
+    email: amrennan@gmail.com
+externalDocs:
+  description: Documentação GitHub
+  url: https://github.com/RennanMendes/api-mensagens
+servers:
+  - url: http://localhost:8080
+paths:
+  /notificacao/{id}:
+    get:
+      tags:
+        - Notificação
+      summary: Recupera notificação por id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: "Notificação recuperada com sucesso"
+        400:
+          description: Formato de id inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroDto'
+              examples:
+                exemplo:
+                  value:
+                    "Agendamento não encontrado!"
+        404:
+          description: Recurso não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroDto'
+              examples:
+                exemplo:
+                  value:
+                    "O formato de ID inválido."
+    delete:
+      tags:
+        - Notificação
+      summary: Cancela envio de notificação por id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        202:
+          description: "Envio de notificação cancelado com sucesso"
+        400:
+          description: Formato de id inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroDto'
+              examples:
+                exemplo:
+                  value:
+                    "Agendamento não encontrado!"
+        404:
+          description: Recurso não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroDto'
+              examples:
+                exemplo:
+                  value:
+                    "O formato de ID inválido."
+  /notificacao:
+    post:
+      tags:
+        - Notificação
+      summary: Agenda envio de novas notificações
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Notificacao"
+      responses:
+        201:
+          description: "Envio de notificação agendado com sucesso"
+        400:
+          description: Erro na validação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroValidacaoDto'
+components:
+  schemas:
+    Notificacao:
+      type: object
+      description: DTO representando uma notificação
+      required:
+        - dataHora
+        - destinatario
+        - mensagem
+        - canal
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        dataHora:
+          type: string
+          format: date-time
+        destinatario:
+          $ref: '#/components/schemas/Destinatario'
+        mensagem:
+          type: string
+        canal:
+          type: string
+          enum: [EMAIL, SMS, PUSH, WHATSAPP]
+        status:
+          type: string
+          enum: [PENDENTE, ENVIADO, CANCELADO]
+      example:
+        dataHora: "2026-02-12T02:24:40.524Z"
+        destinatario:
+          nome: "João Silva"
+          email: "joao@email.com"
+          telefone: "+55(11)99999-8888"
+        mensagem: "Esta é uma notificação de teste"
+        canal: "EMAIL"
+    Destinatario:
+      type: object
+      description: DTO representando um destinatário
+      required:
+        - nome
+        - email
+        - telefone
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+          format: email
+        telefone:
+          type: string
+    ErroValidacaoDto:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Nome do campo com erro
+        defaultMessage:
+          type: string
+          description: Mensagem do erro
+    ErroDto:
+      type: string

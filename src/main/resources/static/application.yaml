@@ -1,0 +1,6 @@
+springdoc:
+  api-docs:
+    title: "API de Mensagens"
+    enabled: true
+  swagger-ui:
+    url: /openapi.yaml

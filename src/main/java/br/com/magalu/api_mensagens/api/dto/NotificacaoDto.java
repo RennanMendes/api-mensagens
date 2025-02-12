@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public record NotificacaoDto(
         UUID id,
-        @Future LocalDateTime dataHora,
-        @Valid DestinatarioDto destinatario,
+        @Future @NotNull LocalDateTime dataHora,
+        @Valid @NotNull DestinatarioDto destinatario,
         @NotNull String mensagem,
         @NotNull Canal canal,
         Status status
